@@ -1,5 +1,5 @@
 require('express-group-routes')
-require('./controllers/midware') 
+const { authenticated } = require('./middleware')
 
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -15,18 +15,17 @@ const Categories = require('./controllers/main').categories
 const Article = require('./controllers/main').article
 const ArtPop = require('./controllers/main').artpopuler
 const ArtByCat = require('./controllers/main').articlebycategory
+const CreateArtkl = require('./controllers/main').createArticle
 
 app.group('/api/v1', (router) => {
     router.post('/login',Auth.login)
-    router.post('/category',Category)
+    router.post('/article',authenticated,CreateArtkl)
+    router.post('/category',authenticated,Category)
+
     router.get('/categories',Categories) 
     router.get('/articles',Article)
     router.get('/articlespopuler',ArtPop)
     router.get('/category/:id/articles',ArtByCat)
 })
-
-app.get('/', (req, res) => {
-    res.send("Halaman Utama")
-})    
 
 app.listen(port, () => console.log(`Listening on port ${port}!`))

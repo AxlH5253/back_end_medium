@@ -1,9 +1,8 @@
 const models = require('../models')
-//const Sequelize = require('../database/connection')
-
 const Categories = models.tbl_categories
 const Articles = models.tbl_articles
 const Follows = models.tbl_follows
+const Users = models.tbl_users
 const Comments = models.tbl_comments 
 
 //task 1 number 1
@@ -53,19 +52,19 @@ exports.artpopuler = (req, res) => {
             attributes: ['id', 'name']
         }]
     }).then(article=>{
-        let k = []
+        let data = []
         
         for(let i=0;i<10;i++){
             max = article.length -1
             k.push(article[max-i])
         }
        
-        res.send(k);
+        res.send(data);
     })
 }
 
 //task 3 number 1
-//http://localhost:5000/api/v1/category/{{id category}}/articles
+//url:http://localhost:5000/api/v1/category/{{id category}}/articles
 //method : get
 exports.articlebycategory = (req, res) => {
     Articles.findAll({
@@ -77,4 +76,31 @@ exports.articlebycategory = (req, res) => {
         }],
         where:{categoryId:req.params.id}
     }).then(article=>res.send(article))
+}
+
+//task 4 number 1
+//url:http://localhost:5000/api/v1/article
+//method post
+exports.createArticle = (req, res) => {
+    Articles.create(req.body).then(article =>{
+        let id = JSON.stringify(article)
+        id = id.split(",")
+        id = id[0].substring(6,article.length)
+        
+        Articles.findOne({
+            attributes: ['id', 'title','content','image','createdAt','updatedAt'],
+            include: [{
+                model: Categories,
+                as: "category",
+                attributes: ['id', 'name']
+            },{
+                model: Users,
+                as:"createdBy",
+                attributes: ['id', 'fullname']
+            }],
+            where:{id:id}
+        }).then(article =>{
+            res.send(article)
+        })
+    })
 }

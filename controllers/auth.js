@@ -5,7 +5,6 @@ const models = require('../models')
 const User = models.tbl_users
 
 exports.login = (req,res)=>{
-    // res.send(req.body.password)
     const email = req.body.email
     const password = req.body.password
 

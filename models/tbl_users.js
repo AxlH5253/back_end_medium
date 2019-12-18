@@ -8,7 +8,9 @@ module.exports = (sequelize, DataTypes) => {
     isActive: DataTypes.BOOLEAN
   }, {});
   tbl_users.associate = function(models) {
-    // associations can be defined here
+    tbl_users.hasMany(
+      models.tbl_articles, {foreignKey : 'articleId'}
+    )
   };
   return tbl_users;
 };
