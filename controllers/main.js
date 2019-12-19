@@ -405,3 +405,16 @@ exports.followPerson =(req,res)=>{
     
     
 }
+
+//task 9 number 1
+//url:http://localhost:5000/api/v1/user/{{userId}}/articles
+//method: get
+exports.articleByPerson =(req,res)=>{
+    Articles.findAll({
+        where:{authorId:req.params.id},
+        attributes:['id','title','content','image','createdAt','updatedAt'],
+        include:[{model:Categories,attributes:['id','name'],as:'category'}]
+    }).then(response=>{
+        res.send(response)
+    })
+}

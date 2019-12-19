@@ -24,9 +24,13 @@ const EditComment = require('./controllers/main').editComment
 const DeleteComment = require('./controllers/main').deleteComment
 const GetAllComment = require('./controllers/main').getAllComment
 const FollowPerson = require('./controllers/main').followPerson
+const ArticleByPerson = require('./controllers/main').articleByPerson
+const Registere = require('./controllers/auth').register
 
 app.group('/api/v1', (router) => {
     router.post('/login',Auth.login)
+    router.post('/register',Registere)
+
     router.post('/article',authenticated,CreateArtkl)
     router.post('/category',authenticated,Category)
     router.post('/article/:id/comment',authenticated,CreateComment)
@@ -38,6 +42,7 @@ app.group('/api/v1', (router) => {
     router.delete('/article/:id',authenticated,DeleteArtkl)
     router.delete('/article/:id/comment',authenticated,DeleteComment)
     
+    router.get('/user/:id/articles',ArticleByPerson)
     router.get('/article/:id',DetailArtkl) 
     router.get('/categories',Categories) 
     router.get('/articles',Article)
