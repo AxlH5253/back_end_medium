@@ -9,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {});
   tbl_users.associate = function(models) {
     tbl_users.hasMany(
-      models.tbl_articles, {foreignKey : 'articleId'}
+      models.tbl_articles, {foreignKey : 'authorId'}
     )
   };
   return tbl_users;

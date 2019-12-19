@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
     isArchived: DataTypes.BOOLEAN
   }, {});
   tbl_comments.associate = function(models) {
-    // associations can be defined here
+    tbl_comments.belongsTo(models.tbl_articles, {foreignKey : 'articleId',as:'article'});
   };
   return tbl_comments;
 };

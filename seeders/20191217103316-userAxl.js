@@ -1,6 +1,17 @@
 'use strict';
 
 module.exports = {
+
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.bulkInsert('tbl_comments', [
+      {
+        userId: 2,
+        articleId: 4,
+        comment: 'ternyata jelek'
+      }
+    ], {});
+  },
+
   up: (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert('tbl_users', [
       {

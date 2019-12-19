@@ -9,9 +9,15 @@ module.exports = (sequelize, DataTypes) => {
     isPublished: DataTypes.BOOLEAN,
     isArchived: DataTypes.BOOLEAN
   }, {});
+  
   tbl_articles.associate = function(models) {  
     tbl_articles.belongsTo(models.tbl_categories, {foreignKey : 'categoryId',as:'category'});
     tbl_articles.belongsTo(models.tbl_users, {foreignKey :'authorId',as:'createdBy'});
+    
+    tbl_articles.hasMany(
+      models.tbl_comments, {as : 'comments', foreignKey : 'articleId'}
+    )
+
   };
   return tbl_articles;
 };
