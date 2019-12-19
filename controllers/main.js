@@ -1,10 +1,12 @@
 const models = require('../models')
+Sequelize = require("sequelize");
+const jwt = require('jsonwebtoken')
+
 const Categories = models.tbl_categories
 const Articles = models.tbl_articles
 const Follows = models.tbl_follows
 const Users = models.tbl_users
 const Comments = models.tbl_comments 
-const jwt = require('jsonwebtoken')
 
 //get id from object function
 function getIdFromObject(data){
@@ -252,44 +254,154 @@ exports.createComment = (req, res) => {
         if(err){
             return res.sendStatus(403);
         } else {
-            jwt.verify(token, 'axla', (err, authorizedData) => {
-                if(err){
-                    return res.sendStatus(403);
-                } else {
-                    let userId = getIdFromObject(authorizedData)
-                    Articles.findOne({
-                        where:{id:req.params.id},
-                        attributes:['id']
-                    }).then(response => {
-                        if(response){
-                            request ={articleId:req.params.id,comment:req.body.comment,userId:userId}
-                            Comments.create(request).then((response)=>{
-                                let commentId = getIdFromObject(response)
-                                Comments.findOne({
-                                    attributes:['id','comment'],
-                                    include:[
-                                        {model:Articles,
-                                         attributes:['id','title'],
-                                         as:'article'
-                                        }
-                                    ],
-                                    where:{id:commentId}
-                                }).then(response=>{
-                                    res.send(response)
-                                })
-                            })
-                        }else{
-                            res.send({
-                                message:"Article not found!"
-                            })
-                        }
-                    })              
+
+            let articleId = req.body.articleId
+           
+            let userId = getIdFromObject(authorizedData)
+            Articles.findOne({
+                    where:{id:articleId},
+                    attributes:['id']
+            }).then(response => {
+                if(response){
+                    request ={articleId:articleId,comment:req.body.comment,userId:userId}
+                    Comments.create(request).then((response)=>{
+                    let commentId = getIdFromObject(response)
+                    Comments.findOne({
+                    attributes:['id','comment'],
+                    include:[
+                        {model:Articles,
+                        attributes:['id','title'],
+                            }
+                    ],
+                        where:{id:commentId}
+                    }).then(response=>{
+                            res.send(response)
+                    })
+                })
+            }else{
+                res.send({
+                    message:"Article not found!"
+                })
+            }
+        })              
+    }
+})
+}
+
+        
+    
+
+
+//task 6 number 2
+//url:http://localhost:5000/api/v1/article/{{id_article}}/comment
+//method: put
+exports.editComment =(req,res)=>{
+    let token = getTokenFromHeader(req.headers['authorization'])
+    jwt.verify(token, 'axla', (err, authorizedData) => {
+        if(err){
+            return res.sendStatus(403);
+        } else {
+            let userId = getIdFromObject(authorizedData)
+            let articleId = req.params.id
+    
+            Comments.findOne({
+                where:{articleId:articleId,userId:userId},
+                attributes:['id']
+            }).then(response=>{
+                if(response){
+                    request={comment:req.body.comment}
+                    Comments.update(request,{
+                        where:{articleId:articleId,userId:userId}
+                    }).then(()=>{
+                    Comments.findOne({
+                        attributes:['id','comment'],
+                        include:[{model:Articles,attributes:['id','title']}],
+                        where:{articleId:articleId,userId:userId}
+                    }).then((response)=>{
+                        res.send(response)
+                    })
+                })
+              }else{
+                    res.send({message:"comment not found"})
                 }
             })
+            
         }
     })
 }
 
-// exports.deleteComment =(req,res)=>{
+//task 6 number 3
+//url:http://localhost:5000/api/v1/article/{{id_article}}/comment
+//method: delete
+exports.deleteComment =(req,res)=>{
+    let token = getTokenFromHeader(req.headers['authorization'])
 
-// }
+    jwt.verify(token, 'axla', (err, authorizedData) => {
+        if(err){
+            return res.sendStatus(403);
+        } else {
+            let userId = getIdFromObject(authorizedData)
+            let articleId = req.params.id
+            
+            Comments.findOne({
+                where:{articleId:articleId,userId:userId},
+                attributes:['id']
+            }).then(response=>{
+                if(response){
+                    Comments.destroy({
+                        where:{articleId:articleId,userId:userId}
+                    })
+                    res.send({message:"delete success"})
+                }else{
+                    res.send({message:"comment not found"})
+                }
+            })
+            
+        }
+    })
+}
+
+//task 6 number 4
+//url:http://localhost:5000/api/v1/article/{{id_article}}/comment
+//method: get
+exports.getAllComment =(req,res)=>{
+    idArticle = req.params.id
+    Comments.findAll({
+        attributes:['id','comment','createdAt','updatedAt'],
+        include:[{
+            model:Articles,
+            attributes:['id','title']
+        }]
+    }).then(response=>{
+        res.send(response)
+    })
+}
+
+//task 7 number 1
+//url:http://localhost:5000/api/v1/follow
+//method: post
+exports.followPerson =(req,res)=>{
+    let token = getTokenFromHeader(req.headers['authorization'])
+
+    jwt.verify(token, 'axla', (err, authorizedData) => {
+        if(err){
+            return res.sendStatus(403);
+        } else {
+            let userId = getIdFromObject(authorizedData)
+            request ={"userId":userId,"followingUserId":req.body.userId}
+            Follows.create(request).then(response=>{
+                lastId = getIdFromObject(response)
+                Follows.findOne({
+                    attributes:['id','followingUserId'],
+                    include:[{model:Users,attributes:['id','email']}],
+                    where:{id:lastId}
+                }).then(response=>{
+                    res.send(response)
+                })
+            })
+            
+        }
+    })
+    
+    
+}

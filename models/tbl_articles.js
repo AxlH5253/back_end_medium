@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     tbl_articles.belongsTo(models.tbl_users, {foreignKey :'authorId',as:'createdBy'});
     
     tbl_articles.hasMany(
-      models.tbl_comments, {as : 'comments', foreignKey : 'articleId'}
+      models.tbl_comments, { foreignKey : 'articleId'}
     )
 
   };

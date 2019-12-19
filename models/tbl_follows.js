@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
     followingUserId: DataTypes.INTEGER
   }, {});
   tbl_follows.associate = function(models) {
-    // associations can be defined here
+    tbl_follows.belongsTo(models.tbl_users,{foreignKey:'followingUserId'});
   };
   return tbl_follows;
 };
