@@ -16,7 +16,7 @@
     "operatorsAliases": false
   },
   "production": {
-    "use_env_variable": "db_medium",
+    "use_env_variable": "postgresql-round-03832",
     "dialect": "postgres",
     "protocol": "postgres",
     "dialectOptions": {
