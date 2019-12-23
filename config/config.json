@@ -16,8 +16,9 @@
     "operatorsAliases": false
   },
   "production": {
-    "use_env_variable": "postgresql-round-03832",
+    "use_env_variable": "DATABASE_URL",
     "dialect": "postgres",
+    "url":"https://medium-back-end.herokuapp.com/",
     "protocol": "postgres",
     "dialectOptions": {
       "ssl": true
