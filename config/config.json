@@ -17,8 +17,9 @@
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "url":"https://medium-back-end.herokuapp.com/",
+    "dialect": "postgres",
     "protocol": "postgres",
+    "host":"https://medium-back-end.herokuapp.com/",
     "dialectOptions": {
       "ssl": true
     }
