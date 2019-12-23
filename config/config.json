@@ -17,13 +17,8 @@
   },
   "production": {
     "use_env_variable": "DATABASE_URL",
-    "username": "root",
-    "password": null,
-    "database": "db_medium",
-    "host": "127.0.0.1",
     "dialect": "postgres",
     "protocol": "postgres",
-    "operatorsAliases": false,
     "dialectOptions": {
       "ssl": true
     }
