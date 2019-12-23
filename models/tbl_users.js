@@ -14,6 +14,9 @@ module.exports = (sequelize, DataTypes) => {
     tbl_users.hasMany(
       models.tbl_follows,{foreignKey:'followingUserId'}
     )
+    tbl_users.hasMany(
+      models.tbl_comments, {foreignKey : 'authorId'}
+    )
   };
   return tbl_users;
 };

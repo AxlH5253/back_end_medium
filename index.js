@@ -1,5 +1,5 @@
 require('express-group-routes')
-const { authenticated } = require('./middleware')
+const { auth, authorized, authenticated } = require("./middleware");
 
 const express = require('express')
 const bodyParser = require('body-parser')
@@ -8,47 +8,48 @@ const port = 5000
 app = express()
 app.use(bodyParser.json())
 
-//Contrlollers
-const Auth = require('./controllers/auth')
-const Category = require('./controllers/main').category
-const Categories = require('./controllers/main').categories
-const Article = require('./controllers/main').article
-const ArtPop = require('./controllers/main').artpopuler
-const ArtByCat = require('./controllers/main').articlebycategory
-const CreateArtkl = require('./controllers/main').createArticle
-const UpdateArtkl = require('./controllers/main').updateArticle
-const DeleteArtkl = require('./controllers/main').deleteArticle
-const DetailArtkl = require('./controllers/main').detailArticle
-const CreateComment = require('./controllers/main').createComment
-const EditComment = require('./controllers/main').editComment
-const DeleteComment = require('./controllers/main').deleteComment
-const GetAllComment = require('./controllers/main').getAllComment
-const FollowPerson = require('./controllers/main').followPerson
-const ArticleByPerson = require('./controllers/main').articleByPerson
-const Registere = require('./controllers/auth').register
+const Categories = require('./controllers/categories')
+const Articles = require('./controllers/articles')
+const Comments = require('./controllers/comments')
+const Follows = require('./controllers/follows')
+const Login = require('./controllers/login')
+const Register = require('./controllers/register')
 
-app.group('/api/v1', (router) => {
-    router.post('/login',Auth.login)
-    router.post('/register',Registere)
-
-    router.post('/article',authenticated,CreateArtkl)
-    router.post('/category',authenticated,Category)
-    router.post('/article/:id/comment',authenticated,CreateComment)
-    router.post('/follow',authenticated,FollowPerson)
-
-    router.put('/article/:id/comment',authenticated,EditComment)
-    router.put('/article/:id',authenticated,UpdateArtkl)
-
-    router.delete('/article/:id',authenticated,DeleteArtkl)
-    router.delete('/article/:id/comment',authenticated,DeleteComment)
-    
-    router.get('/user/:id/articles',ArticleByPerson)
-    router.get('/article/:id',DetailArtkl) 
-    router.get('/categories',Categories) 
-    router.get('/articles',Article)
-    router.get('/articlespopuler',ArtPop)
-    router.get('/category/:id/articles',ArtByCat)
-    router.get('/article/:id/comment',GetAllComment)
+app.group('/api/v1',(router)=>{
+    //add new category
+    router.post('/category',Categories.addCategory)
+    //show all categories
+    router.get('/categories',Categories.showCategories)
+    //show all articles
+    router.get('/articles',Articles.showArticles)
+    //show 10 latest articles
+    router.get('articles?orderBy=',Articles.showArticles)
+    //show articles by category
+    router.get('/category/:id/articles',Categories.showArticlesByCategory)
+    //add new article
+    router.post('/article',auth,Articles.addArticle)
+    //update article
+    router.put('/article/:id',auth,Articles.updateArticle)
+    //delete article
+    router.delete('/article/:id',auth,Articles.deleteArticle)
+    //detail article
+    router.get('/article/:id',Articles.detailArticle)
+    //add comment
+    router.post('/article/:id/comment',auth,Comments.addComment)
+    //edit comment
+    router.put('/article/:id/comment',auth,Comments.editComment)
+    //delete comment
+    router.delete('/article/:id/comment',auth,Comments.deleteComment)
+    //show all comments
+    router.get('/article/:id/comments',Comments.showAllComment)
+    //follow person
+    router.post('/follow',auth,Follows.followPerson)
+    //article by person
+    router.get('/user/:id/articles',Articles.articleByPerson)
+    //register new account
+    router.post('/register',Register.register)
+    //login to account
+    router.post('/login',Login.login)
 })
 
 app.listen(port, () => console.log(`Listening on port ${port}!`))

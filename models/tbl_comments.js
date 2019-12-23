@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
     isArchived: DataTypes.BOOLEAN
   }, {});
   tbl_comments.associate = function(models) {
-    tbl_comments.belongsTo(models.tbl_articles, {foreignKey : 'articleId'});
+    tbl_comments.belongsTo(models.tbl_articles, {foreignKey : 'articleId',as:'article'});
+    tbl_comments.belongsTo(models.tbl_users, {foreignKey :'userId',as:'commentBy'});
   };
   return tbl_comments;
 };
