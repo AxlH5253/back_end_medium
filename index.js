@@ -2,11 +2,13 @@ require('express-group-routes')
 const { auth, authorized, authenticated } = require("./middleware");
 
 const express = require('express')
+const cors = require('cors')
 const bodyParser = require('body-parser')
 const port = process.env.PORT || 5000
 
 app = express()
 app.use(bodyParser.json())
+app.use(cors())
 
 const Categories = require('./controllers/categories')
 const Articles = require('./controllers/articles')
