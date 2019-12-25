@@ -6,7 +6,7 @@ const key = require('../config/secret_key')
 const User = models.tbl_users
 
 exports.login = (req,res)=>{
-
+    const result = []
     const errors = [];
     
     if (!req.body.email) errors.push("`email` is required");
@@ -14,9 +14,9 @@ exports.login = (req,res)=>{
     const hasErrors = Boolean(errors.length);
 
     if (hasErrors) {
-        return res.status(422).json({
-            errors: errors
-        });
+        let objError = Object.assign({}, errors)
+        result.push(objError)
+        return res.send(result)
     }
 
     const email = req.body.email
@@ -27,15 +27,12 @@ exports.login = (req,res)=>{
         }).then(user => {
         if(user){
             const token = jwt.sign({id:user.id},key.secret)
-            user = user.email
-            res.send({
-                user,
-                token
-            })
+            const email = user.email
+            result.push({email,token})
+            res.send(result)
         }else{
-            res.send({
-                message:"Wrong Email or Password"
-            })
+            result.push({message:"failed"})
+            res.send(result)
         }
     })
 }
