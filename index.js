@@ -16,6 +16,7 @@ const Comments = require('./controllers/comments')
 const Follows = require('./controllers/follows')
 const Login = require('./controllers/login')
 const Register = require('./controllers/register')
+const User = require('./controllers/users')
 
 app.group('/api/v1',(router)=>{
     //add new category
@@ -62,6 +63,9 @@ app.group('/api/v1',(router)=>{
 
     //article by person
     router.get('/user/:id/articles',Articles.articleByPerson)
+
+    //show user profil
+    router.post('/user',auth,User.showUser)
 
     //register new account
     router.post('/register',Register.register)
