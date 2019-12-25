@@ -4,6 +4,7 @@ const User = models.tbl_users
 const key = require('../config/secret_key')
 
 exports.register = (req,res)=>{
+    const result = [];
     const errors = [];
     
     if (!req.body.username) errors.push("`username` is required");
@@ -13,9 +14,9 @@ exports.register = (req,res)=>{
     const hasErrors = Boolean(errors.length);
 
     if (hasErrors) {
-        return res.status(422).json({
-            errors: errors
-        });
+        let objError = Object.assign({}, errors)
+        result.push(objError)
+        return res.send(result)
     }
 
     const username = req.body.username
@@ -31,7 +32,9 @@ exports.register = (req,res)=>{
             where:{id:id},
             attributes: ['email']}
         ).then(user=>{
-            res.send({user,token})
+            const email = user.email
+            result.push({email,token})
+            res.send(result)
         })
     })
 }

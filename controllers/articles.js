@@ -41,7 +41,7 @@ exports.showArticles = (req, res) => {
 exports.addArticle = (req, res) => {
    
     let userId = req.userId
-
+    let result = [];
     const errors = [];
     
     if (!req.body.title) errors.push("`title` is required");
@@ -51,16 +51,17 @@ exports.addArticle = (req, res) => {
     const hasErrors = Boolean(errors.length);
 
     if (hasErrors) {
-        return res.status(422).json({
-            errors: errors
-        });
+        let objError = Object.assign({}, errors)
+        result.push(objError)
+        return res.send(result)
     }
 
     Categories.findAll({
         where:{id:req.body.categoryId}
     }).then(response=>{
         if(response.length<=0){
-           return res.send({message:"Category id not found"})
+           result.push({message:"Category id not found"})
+           return res.send(result)
         }
     })
 
@@ -83,18 +84,21 @@ exports.addArticle = (req, res) => {
                     attributes: ['id', 'fullname']
                  }]
          }).then(response =>{
-              res.send(response)
+              result.push(response)
+              res.send(result)
           })
       })
 }
 
 exports.updateArticle = (req, res) => {
+    let result = [];
     
     Articles.findAll({
         where:{id:req.params.id}
     }).then(response=>{
         if(response.length<=0){
-           return res.send({message:'Article id not found'})
+            result.push({message:'Article id not found'})
+           return res.send(result)
         }
     })
 
@@ -110,9 +114,9 @@ exports.updateArticle = (req, res) => {
     const hasErrors = Boolean(errors.length);
 
     if (hasErrors) {
-        return res.status(422).json({
-            errors: errors
-        });
+        let objError = Object.assign({}, errors)
+        result.push(objError)
+        return res.send(result)
     }
 
     let userId = req.userId
@@ -140,7 +144,8 @@ exports.updateArticle = (req, res) => {
                 }],
                     where:{id:req.params.id}
                 }).then(response =>{
-                    res.send(response)
+                    result.push(response)
+                    res.send(result)
                 })
             }
         )
@@ -153,12 +158,14 @@ exports.updateArticle = (req, res) => {
 }
 
 exports.deleteArticle = (req, res) => {
+    let result = [];
 
     Articles.findAll({
         where:{id:req.params.id}
     }).then(response=>{
         if(response.length<=0){
-           return res.send({message:'Article id not found'})
+           result.push({message:'Article id not found'})
+           return res.send(result)
         }
     })
 
@@ -182,11 +189,13 @@ exports.deleteArticle = (req, res) => {
 }
 
 exports.detailArticle = (req, res) => {
+    let result = []
     Articles.findAll({
         where:{id:req.params.id}
     }).then(response=>{
         if(response.length<=0){
-           return res.send({message:'Article id not found'})
+           result.push({message:'Article id not found'})
+           return res.send(result)
         }
 
     Articles.findOne({

@@ -6,7 +6,7 @@ const key = require('../config/secret_key')
 const User = models.tbl_users
 
 exports.login = (req,res)=>{
-    const result = []
+    const result = [];
     const errors = [];
     
     if (!req.body.email) errors.push("`email` is required");
